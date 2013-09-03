@@ -16,11 +16,11 @@ dcs
 * Generates intermediate sscs bam file in addition to the final dcs bam.
 * Does NOT currently attempt to "pair mates" for final DCS records.
 * SSCS SAM tags
-** ZC - number of reads collapsed to this SSCS record
+	* ZC - number of reads collapsed to this SSCS record
 * DCS SAM tags
-** ZD - number of SSCS collapsed to DCS (should generally be 2)
-** Z1 - original number of reads contributing to SSCS read 1
-** Z2 - original number of reads contributing to SSCS read 2
+	* ZD - number of SSCS collapsed to DCS (should generally be 2)
+	* Z1 - original number of reads contributing to SSCS read 1
+	* Z2 - original number of reads contributing to SSCS read 2
 
 Sample usage:
 
