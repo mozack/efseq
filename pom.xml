@@ -52,7 +52,7 @@
 	      		</descriptorRefs>
 	      		<archive>
             		<manifest>
-              			<mainClass>main.java.efseq.EfSeq</mainClass>
+              			<mainClass>efseq.EfSeq</mainClass>
             		</manifest>
           		</archive>
     		</configuration>

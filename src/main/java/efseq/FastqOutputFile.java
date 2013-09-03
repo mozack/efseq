@@ -1,4 +1,4 @@
-package main.java.efseq;
+package efseq;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

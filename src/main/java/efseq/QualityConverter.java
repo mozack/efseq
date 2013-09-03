@@ -1,4 +1,4 @@
-package main.java.efseq;
+package efseq;
 
 /**
  * Utility class that can be used to convert quality scores.

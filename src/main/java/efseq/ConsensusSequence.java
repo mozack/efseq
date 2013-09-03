@@ -1,4 +1,4 @@
-package main.java.efseq;
+package efseq;
 
 import java.io.IOException;
 import java.util.ArrayList;

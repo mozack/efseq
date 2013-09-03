@@ -1,4 +1,4 @@
-package main.java.efseq;
+package efseq;
 
 /**
  * Compares 2 DNA sequences providing a score indicating similarity.
