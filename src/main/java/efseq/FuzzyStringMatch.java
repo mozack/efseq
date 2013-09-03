@@ -1,4 +1,4 @@
-package efseq;
+package main.java.efseq;
 
 public class FuzzyStringMatch {
 	

@@ -1,4 +1,4 @@
-package efseq;
+package main.java.efseq;
 
 import java.util.Arrays;
 
