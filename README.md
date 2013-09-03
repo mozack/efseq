@@ -21,6 +21,7 @@ dcs
 	* ZD - number of SSCS collapsed to DCS (should generally be 2)
 	* Z1 - original number of reads contributing to SSCS read 1
 	* Z2 - original number of reads contributing to SSCS read 2
+* Note that the edit distance tag provided by BWA (NM) is not currently recalculated.
 
 Sample usage:
 
