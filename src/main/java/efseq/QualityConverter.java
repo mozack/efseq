@@ -3,7 +3,7 @@ package main.java.efseq;
 /**
  * Utility class that can be used to convert quality scores.
  * 
- * @author Lisle Mose (lmose at unc dot edu)
+ * @author Lisle Mose
  */
 public class QualityConverter {
 	

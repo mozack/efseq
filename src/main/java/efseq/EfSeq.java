@@ -2,6 +2,11 @@ package main.java.efseq;
 
 import java.io.IOException;
 
+/**
+ * Main entry point for efseq.
+ * 
+ * @author Lisle Mose
+ */
 public class EfSeq {
 
 	public static void run(String[] args) throws IOException {

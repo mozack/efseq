@@ -8,6 +8,14 @@ import java.util.Map;
 
 import net.sf.samtools.SAMRecord;
 
+/**
+ * Collapses reads into containing matching tags into consensus sequence.
+ * Handles both single strand consensus sequence (SSCS)
+ * and duplex consensus sequence (DCS).  Does not currently consider pairings
+ * for DCS.  Tag matching allows for mismatches and gaps.
+ * 
+ * @author Lisle Mose
+ */
 public class ConsensusSequence {
 	
 	private static final double MIN_CONSENSUS_BASE_FREQUENCY = .9;

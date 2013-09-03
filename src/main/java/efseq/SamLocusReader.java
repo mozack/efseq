@@ -11,10 +11,10 @@ import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.SAMRecord;
 
 /**
- * Iterates over a Sam or Bam file returning a List of SAMRecords for each unique read name.
- * Assumes the input file is sorted by read name.
+ * Iterates over a Sam or Bam file returning a List of SAMRecords for each starting locus.
+ * Input must be sorted by coordinate.
  * 
- * @author Lisle Mose (lmose at unc dot edu)
+ * @author Lisle Mose
  */
 public class SamLocusReader implements Iterable<List<SAMRecord>> {
 	

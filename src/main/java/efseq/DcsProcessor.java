@@ -8,6 +8,11 @@ import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMRecord;
 
+/**
+ * Entry point for Duplex Consensus Sequence (DCS) processing
+ * 
+ * @author Lisle Mose
+ */
 public class DcsProcessor {
 
 	public void dcs(String inputBam, String sscsOutput, String dcsOutput, int maxVariance) throws IOException {

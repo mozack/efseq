@@ -2,6 +2,11 @@ package main.java.efseq;
 
 import java.io.IOException;
 
+/**
+ * Prepares paired end fastq files for initial alignment and subsequent DCS processing.
+ * 
+ * @author Lisle Mose
+ */
 public class FastqPreprocessor {
 	
 	private static final int TAG_LENGTH =  12;

@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Utility class for outputting fastq files
  * 
- * @author Lisle Mose (lmose at unc dot edu)
+ * @author Lisle Mose
  */
 public class FastqOutputFile {
     private BufferedWriter writer;

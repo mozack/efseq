@@ -1,11 +1,20 @@
 package main.java.efseq;
 
+/**
+ * Compares 2 DNA sequences providing a score indicating similarity.
+ * Allows mismatches and gaps.  This class is not threadsafe.
+ * 
+ * @author Lisle Mose
+ */
 public class FuzzyStringMatch {
 	
 	private String s1;
 	private String s2;
 	int[][] matrix;
 
+	/**
+	 * Returns a score indicating the similarity between the 2 input sequences. 
+	 */
 	public int scoreMatch(String s1, String s2) {
 		this.s1 = s1;
 		this.s2 = s2;
