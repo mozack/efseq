@@ -8,7 +8,7 @@ prep
 
 Sample usage:
 
-java -Xmx1G -jar efseq.jar prep 1.fastq 2.fastq out1.fastq out2.fastq 100
+```java -Xmx1G -jar efseq.jar prep 1.fastq 2.fastq out1.fastq out2.fastq 100```
 
 
 dcs
@@ -26,4 +26,4 @@ dcs
 
 Sample usage:
 
-java -Xmx4G -jar efseq.jar dcs sorted.bam sscs.bam dcs.bam 10
+```java -Xmx4G -jar efseq.jar dcs sorted.bam sscs.bam dcs.bam 10```
