@@ -128,14 +128,12 @@ public class ConsensusSequence {
 		read.setReadString(sequence.toString());
 		read.setBaseQualityString(qualities.toString());
 		
-		read.clearAttributes();
-		
 		if (isDcs) {
 			int idx = 1;
 			// Record all SCCS counts for this DCS read
 			for (SAMRecord contributingRead : reads) {
 				if (idx < 10) {
-					int count = (Integer) contributingRead.getAttribute("ZC");
+					int count = (Integer) contributingRead.getAttribute("ZS");
 					String tag = "Z" + idx;
 					read.setAttribute(tag, count);
 					idx++;
@@ -145,10 +143,13 @@ public class ConsensusSequence {
 			}
 			
 			read.setAttribute("ZD", reads.size());
+			read.setAttribute("ZS", null);
 			
 		} else {
+			read.clearAttributes();
+
 			// Record SSCS count
-			read.setAttribute("ZC", reads.size());
+			read.setAttribute("ZS", reads.size());
 		}
 		
 		return read;
