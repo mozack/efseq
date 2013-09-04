@@ -53,6 +53,8 @@ public class DcsProcessor {
         	dcsCount += dcsReads.size();
         }
         
+        System.out.println("Closing output BAMs");
+        
         sscsWriter.close();
         dcsWriter.close();
         reader.close();

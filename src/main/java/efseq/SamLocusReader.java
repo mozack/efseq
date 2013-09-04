@@ -51,7 +51,7 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     		numRecords++;
     		
     		if ((numRecords % 1000000) == 0) {
-    			System.out.println("Processed: " + numRecords + " records.");
+    			System.out.println("Processed " + numRecords + " records.  Chromosome: " + read.getReferenceName());
     		}
     	}
     	
