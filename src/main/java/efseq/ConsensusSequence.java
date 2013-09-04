@@ -124,8 +124,11 @@ public class ConsensusSequence {
 		}
 		
 		SAMRecord read = reads.get(0);
+		read.setReadName(read.getReadName().substring(0, 24));
 		read.setReadString(sequence.toString());
 		read.setBaseQualityString(qualities.toString());
+		
+		read.clearAttributes();
 		
 		if (isDcs) {
 			int idx = 1;
