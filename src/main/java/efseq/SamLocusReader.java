@@ -37,7 +37,11 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     }
     
     private boolean hasMoreReads() {
-    	return (cachedRead != null && !cachedRead.getReadUnmappedFlag()) || iter.hasNext();
+    	if ((cachedRead == null) && (iter.hasNext())) {
+    		cachedRead = iter.next();
+    	}
+    	
+    	return cachedRead != null && !cachedRead.getReadUnmappedFlag();    	
     }
     
     private SAMRecord getNextRead() {
@@ -82,7 +86,7 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     			}
     		}
     		
-    		// If the last read doesn't have the same name, cache it
+    		// If the last read doesn't have the same locus, cache it
     		if (!getLocus(read).equals(locus)) {
     			cachedRead = read;
     		}
