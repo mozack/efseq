@@ -42,10 +42,22 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     
     private boolean hasMoreReads() {
     	if ((cachedRead == null) && (iter.hasNext())) {
-    		cachedRead = iter.next();
+    		cachedRead = advanceSamIter();
     	}
     	
     	return cachedRead != null && !isReadUnmapped(cachedRead);
+    }
+    
+    private SAMRecord advanceSamIter() {
+    	SAMRecord read = iter.next();
+		
+    	numRecords++;
+		
+		if ((numRecords % 1000000) == 0) {
+			System.out.println("Processed " + numRecords + " records.  Chromosome: " + read.getReferenceName());
+		}
+		
+    	return read;
     }
     
     private SAMRecord getNextRead() {
@@ -55,12 +67,7 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     		read = cachedRead;
     		cachedRead = null;
     	} else {
-    		read = iter.next();
-    		numRecords++;
-    		
-    		if ((numRecords % 1000000) == 0) {
-    			System.out.println("Processed " + numRecords + " records.  Chromosome: " + read.getReferenceName());
-    		}
+    		read = advanceSamIter();;
     	}
     	
     	return read;
