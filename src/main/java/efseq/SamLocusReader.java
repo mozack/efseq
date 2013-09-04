@@ -36,12 +36,16 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     	return inputSam.getFileHeader();
     }
     
+    private boolean isReadUnmapped(SAMRecord read) {
+    	return read.getReadUnmappedFlag() && read.getAlignmentStart() == 0;
+    }
+    
     private boolean hasMoreReads() {
     	if ((cachedRead == null) && (iter.hasNext())) {
     		cachedRead = iter.next();
     	}
     	
-    	return cachedRead != null && !cachedRead.getReadUnmappedFlag();    	
+    	return cachedRead != null && !isReadUnmapped(cachedRead);
     }
     
     private SAMRecord getNextRead() {
@@ -75,10 +79,12 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     	if (hasMoreReads()) {
     		read = getNextRead();
     		locus = getLocus(read);
-    		
+    		    		
     		reads.add(read);
     		
-    		while (hasMoreReads() && getLocus(read).equals(locus)) {
+    		// getLocus() must be called prior to hasMoreReads() in this check.
+    		// hasMoreReads() would otherwise advance the cachedRead
+    		while (getLocus(read).equals(locus) && hasMoreReads()) {
     			read = getNextRead();
     			
     			if (getLocus(read).equals(locus)) {
