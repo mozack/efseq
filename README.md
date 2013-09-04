@@ -26,4 +26,4 @@ dcs
 
 Sample usage:
 
-```java -Xmx4G -jar efseq.jar dcs sorted.bam sscs.bam dcs.bam 10```
+```java -Xmx1G -jar efseq.jar dcs sorted.bam sscs.bam dcs.bam 10```
