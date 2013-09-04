@@ -67,7 +67,7 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     }
     
     private String getLocus(SAMRecord read) {
-    	return read.getReadUnmappedFlag() ? "unmapped" : read.getReferenceName() + ":" + read.getAlignmentStart();
+    	return isReadUnmapped(read) ? "unmapped" : read.getReferenceName() + ":" + read.getAlignmentStart();
     }
     
     private List<SAMRecord> getNextReadList() {
