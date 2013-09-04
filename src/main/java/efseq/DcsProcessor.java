@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMFileHeader.SortOrder;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMRecord;
@@ -19,11 +21,14 @@ public class DcsProcessor {
 
         SamLocusReader reader = new SamLocusReader(inputBam);
         
+        SAMFileHeader header = reader.getFileHeader();
+        header.setSortOrder(SortOrder.coordinate);
+        
 		SAMFileWriter sscsWriter = new SAMFileWriterFactory().makeSAMOrBAMWriter(
-				reader.getFileHeader(), false, new File(sscsOutput));
+				header, true, new File(sscsOutput));
 		
 		SAMFileWriter dcsWriter = new SAMFileWriterFactory().makeSAMOrBAMWriter(
-				reader.getFileHeader(), false, new File(dcsOutput));
+				header, true, new File(dcsOutput));
 
 		int sscsCount = 0;
 		int dcsCount = 0;
