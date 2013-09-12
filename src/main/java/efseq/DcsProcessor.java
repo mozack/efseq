@@ -17,7 +17,7 @@ import net.sf.samtools.SAMRecord;
  */
 public class DcsProcessor {
 
-	public void dcs(String inputBam, String sscsOutput, String dcsOutput, int maxVariance) throws IOException {
+	public void dcs(String inputBam, String sscsOutput, String dcsOutput, int maxVarianceSscs, int maxVarianceDcs) throws IOException {
 
         SamLocusReader reader = new SamLocusReader(inputBam);
         
@@ -36,7 +36,7 @@ public class DcsProcessor {
         for (List<SAMRecord> reads : reader) {
         	
         	ConsensusSequence cs = new ConsensusSequence();
-        	List<SAMRecord> sscsReads = cs.collapse(reads, maxVariance, 3, false);
+        	List<SAMRecord> sscsReads = cs.collapse(reads, maxVarianceSscs, 3, false);
         	
         	for (SAMRecord sscsRead : sscsReads) {
         		sscsWriter.addAlignment(sscsRead);
@@ -44,7 +44,7 @@ public class DcsProcessor {
         	
         	sscsCount += sscsReads.size();
         	
-        	List<SAMRecord> dcsReads = cs.collapse(sscsReads, maxVariance, 2, true);
+        	List<SAMRecord> dcsReads = cs.collapse(sscsReads, maxVarianceDcs, 2, true);
         	
         	for (SAMRecord dcsRead : dcsReads) {
         		dcsWriter.addAlignment(dcsRead);
@@ -68,10 +68,10 @@ public class DcsProcessor {
 //		String out = "/home/lmose/dev/dcs/dcs_candidates.bam";
 		
 		String in = "/home/lmose/dev/dcs/efseq/pre.chr1.bam";
-		String sscs = "/home/lmose/dev/dcs/efseq/sscs.bam";
-		String dcs = "/home/lmose/dev/dcs/efseq/dcs.bam";
+		String sscs = "/home/lmose/dev/dcs/efseq/sscs2.bam";
+		String dcs = "/home/lmose/dev/dcs/efseq/dcs2.bam";
 		
 		DcsProcessor dcsProcessor = new DcsProcessor();
-		dcsProcessor.dcs(in, sscs, dcs, 10);
+		dcsProcessor.dcs(in, sscs, dcs, 10, 0);
 	}
 }
