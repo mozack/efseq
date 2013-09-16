@@ -44,6 +44,6 @@ public class EfSeq {
 	private static void usage() {
 		System.out.println("prep = Fastq Prep for alignment and downstream DCS.  dcs = Duplex Consensus Sequence");
 		System.out.println("java -jar efseq.jar prep <1.fastq> <2.fastq> <out1.fastq> <out2.fastq> <max_read_len>");
-		System.out.println("java -jar efseq.jar dcs <input.bam> <sscs.bam> <dcs.bam> <max_variance_sscs> <max_variance_dcs>");
+		System.out.println("java -jar efseq.jar dcs <input.bam> <sscs.bam> <dcs.bam> <max_variance_sscs> <max_variance_dcs> <max_reads_at_locus>");
 	}
 }
