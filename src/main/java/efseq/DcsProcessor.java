@@ -17,9 +17,10 @@ import net.sf.samtools.SAMRecord;
  */
 public class DcsProcessor {
 
-	public void dcs(String inputBam, String sscsOutput, String dcsOutput, int maxVarianceSscs, int maxVarianceDcs) throws IOException {
+	public void dcs(String inputBam, String sscsOutput, String dcsOutput, int maxVarianceSscs, int maxVarianceDcs,
+			int maxReadsAtLocus) throws IOException {
 
-        SamLocusReader reader = new SamLocusReader(inputBam);
+        SamLocusReader reader = new SamLocusReader(inputBam, maxReadsAtLocus);
         
         SAMFileHeader header = reader.getFileHeader();
         header.setSortOrder(SortOrder.coordinate);
@@ -67,11 +68,16 @@ public class DcsProcessor {
 //		String in = "/home/lmose/dev/dcs/temp1_all.sort.bam";
 //		String out = "/home/lmose/dev/dcs/dcs_candidates.bam";
 		
-		String in = "/home/lmose/dev/dcs/efseq/pre.chr1.bam";
-		String sscs = "/home/lmose/dev/dcs/efseq/sscs2.bam";
-		String dcs = "/home/lmose/dev/dcs/efseq/dcs2.bam";
+//		String in = "/home/lmose/dev/dcs/efseq/pre.chr1.bam";
+//		String sscs = "/home/lmose/dev/dcs/efseq/sscs2.bam";
+//		String dcs = "/home/lmose/dev/dcs/efseq/dcs2.bam";
+		
+		String in = "/home/lmose/dev/dcs/efseq/chr17.bam";
+		String sscs = "/home/lmose/dev/dcs/efseq/sscs17.bam";
+		String dcs = "/home/lmose/dev/dcs/efseq/dcs17.bam";
+
 		
 		DcsProcessor dcsProcessor = new DcsProcessor();
-		dcsProcessor.dcs(in, sscs, dcs, 10, 0);
+		dcsProcessor.dcs(in, sscs, dcs, 0, 10, 1000);
 	}
 }

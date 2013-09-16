@@ -22,10 +22,12 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
 	private Iterator<SAMRecord> iter;
 	private SAMRecord cachedRead;
 	private int numRecords = 0;
-	private static final int MAX_READS_AT_LOCUS = 3000;
+	private int maxReadsAtLocus;
 
-    public SamLocusReader(String filename) {
+    public SamLocusReader(String filename, int maxReadsAtLocus) {
         File inputFile = new File(filename);
+        
+        this.maxReadsAtLocus = maxReadsAtLocus;
         
         inputSam = new SAMFileReader(inputFile);
         inputSam.setValidationStringency(ValidationStringency.SILENT);
@@ -97,7 +99,7 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     			
     			if (getLocus(read).equals(locus)) {
     				
-    				if (reads.size() < MAX_READS_AT_LOCUS) {
+    				if (reads.size() < maxReadsAtLocus) {
     					reads.add(read);
     				}
     			}
@@ -109,7 +111,7 @@ public class SamLocusReader implements Iterable<List<SAMRecord>> {
     		}
     	}
     	
-    	if (reads.size() >= MAX_READS_AT_LOCUS) {
+    	if (reads.size() >= maxReadsAtLocus) {
     		SAMRecord firstRead = reads.get(0);
     		System.out.println("Too many reads at: " + firstRead.getReferenceName() + ":" + firstRead.getAlignmentStart());
     		reads.clear();

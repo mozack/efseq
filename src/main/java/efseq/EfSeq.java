@@ -21,16 +21,17 @@ public class EfSeq {
 			
 			FastqPreprocessor fp = new FastqPreprocessor();
 			fp.preProcess(fastq1, fastq2, out1, out2, maxReadLen);
-		} else if (args[0].equals("dcs") && args.length == 6) {
+		} else if (args[0].equals("dcs") && args.length == 7) {
 			// String inputBam, String sscsOutput, String dcsOutput, int maxVariance
 			String input = args[1];
 			String sscs = args[2];
 			String dcs = args[3];
 			int maxVarianceSscs = Integer.parseInt(args[4]);
 			int maxVarianceDcs = Integer.parseInt(args[5]);
+			int maxReadsAtLocus = Integer.parseInt(args[6]);
 			
 			DcsProcessor dcsProcessor = new DcsProcessor();
-			dcsProcessor.dcs(input, sscs, dcs, maxVarianceSscs, maxVarianceDcs);
+			dcsProcessor.dcs(input, sscs, dcs, maxVarianceSscs, maxVarianceDcs, maxReadsAtLocus);
 		} else {
 			usage();
 		}
