@@ -9,12 +9,12 @@ import java.io.IOException;
  */
 public class FastqPreprocessor {
 	
-	private static final int TAG_LENGTH =  8;
-	private static final int CONNECTOR_LENGTH = 13;
-	private static final int SEP_LENGTH = 1;
+	public static final int TAG_LENGTH =  8;
+	public static final int CONNECTOR_LENGTH = 13;
+	public static final int SEP_LENGTH = 1;
 	
 	// 8 + 13 + 1
-	private static final int VALID_SEQUENCE_START_IDX = 22;
+	public static final int VALID_SEQUENCE_START_IDX = 22;
 
 	/**
 	 * Prep input FASTQ files for initial alignment and downstream consensus sequence processing. 

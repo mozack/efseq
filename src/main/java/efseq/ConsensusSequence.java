@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.samtools.CigarOperator;
 import net.sf.samtools.SAMRecord;
 
 /**
@@ -37,6 +38,12 @@ public class ConsensusSequence {
         
     	for (SAMRecord read : readsAtLocus) {
 			
+    		if (read.getReadUnmappedFlag() || read.getNotPrimaryAlignmentFlag() || (read.getFlags() & 0x800) == 0x800 || read.getCigar().getCigarElement(0).getOperator() == CigarOperator.S) {
+    			// Skip to the next read
+    			// TODO: Adjust for soft clipped start upstream from here.
+    			continue;
+    		}
+    		
     		boolean isCollapsed = false;
     		
 			for (List<SAMRecord> collapsedRead : collapsedReads) {
@@ -44,18 +51,18 @@ public class ConsensusSequence {
 				String firstTag;
 				String secondTag;
 				    		
-				firstTag = collapsedRead.get(0).getReadName().substring(0, 24);
+				firstTag = collapsedRead.get(0).getReadName().substring(0, FastqPreprocessor.TAG_LENGTH);
 				
 				if (isDcs) {
 		    		secondTag = read.getReadName().substring(12,24) + 
 		    				read.getReadName().substring(0,12);
 				} else {
-					secondTag = read.getReadName().substring(0, 24);
+					secondTag = read.getReadName().substring(0, FastqPreprocessor.TAG_LENGTH);
 				}
 	    		
 	    		int matchScore = fuzzy.scoreMatch(firstTag, secondTag);
 	    		
-	    		int diff = 24 - matchScore;
+	    		int diff = FastqPreprocessor.TAG_LENGTH - matchScore;
 	    		
 	    		if (diff <= maxVariance) {
 	    			isCollapsed = true;
@@ -112,12 +119,15 @@ public class ConsensusSequence {
 		StringBuffer sequence = new StringBuffer();
 		StringBuffer qualities = new StringBuffer();
 		
+		int ambiguousBaseCount = 0;
+		
 		for (int i=0; i<reads.get(0).getReadString().length(); i++) {
 			char consensusBase = getConsensusBase(baseCounts.get(i), reads.size());
 
 			sequence.append(consensusBase);
 			if (consensusBase == AMBIGUOUS_BASE) {
 				qualities.append(MIN_QUAL);
+				ambiguousBaseCount += 1;
 			} else {
 				qualities.append(MAX_QUAL);
 			}
@@ -150,7 +160,10 @@ public class ConsensusSequence {
 
 			// Record SSCS count
 			read.setAttribute("ZS", reads.size());
+			read.setAttribute("ZA", ambiguousBaseCount);
 		}
+		
+		read.setReadPairedFlag(false);
 		
 		return read;
 	}
