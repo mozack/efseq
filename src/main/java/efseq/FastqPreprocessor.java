@@ -9,9 +9,12 @@ import java.io.IOException;
  */
 public class FastqPreprocessor {
 	
-	private static final int TAG_LENGTH =  12;
-	// 12 base tag + 5 base fixed sequence + additional 4 bases
-	private static final int VALID_SEQUENCE_START_IDX = 21;
+	private static final int TAG_LENGTH =  8;
+	private static final int CONNECTOR_LENGTH = 13;
+	private static final int SEP_LENGTH = 1;
+	
+	// 8 + 13 + 1
+	private static final int VALID_SEQUENCE_START_IDX = 22;
 
 	/**
 	 * Prep input FASTQ files for initial alignment and downstream consensus sequence processing. 
@@ -37,18 +40,38 @@ public class FastqPreprocessor {
 		
 		while ((rec1 != null) && (rec2 != null)) {
 
-			String tag = rec1.getSequence().substring(0, TAG_LENGTH) +
-					rec2.getSequence().substring(0, TAG_LENGTH);
+//			String tag = rec1.getSequence().substring(0, TAG_LENGTH) +
+//					rec2.getSequence().substring(0, TAG_LENGTH);
 			
+			String tag1 = rec1.getSequence().substring(0, TAG_LENGTH);
+			String tag2 = rec2.getSequence().substring(0, TAG_LENGTH);
+			
+			String connector1 = rec1.getSequence().substring(TAG_LENGTH, TAG_LENGTH+CONNECTOR_LENGTH);
+			String connector2 = rec2.getSequence().substring(TAG_LENGTH, TAG_LENGTH+CONNECTOR_LENGTH);
+			
+			String sep1 = rec1.getSequence().substring(TAG_LENGTH+CONNECTOR_LENGTH, TAG_LENGTH+CONNECTOR_LENGTH+SEP_LENGTH);
+			String sep2 = rec2.getSequence().substring(TAG_LENGTH+CONNECTOR_LENGTH, TAG_LENGTH+CONNECTOR_LENGTH+SEP_LENGTH);
+
+			rec1.setId("@" + tag1 + "_" + connector1 + "_" + sep1 + "_" + rec1.getId());
+			rec2.setId("@" + tag2 + "_" + connector2 + "_" + sep2 + "_" + rec2.getId());
+			trimSequenceAndQuality(rec1, maxReadLength);
+			trimSequenceAndQuality(rec2, maxReadLength);
+			
+			out1.write(rec1);
+			out2.write(rec2);
+
+			
+			/*
 			if (isTagSufficientlyComplex(tag)) {
 				rec1.setId("@" + tag + "_" + rec1.getId());
 				rec2.setId("@" + tag + "_" + rec2.getId());
-				trimSequenceAndQuality(rec1, maxReadLength);
+				trimSequenceAn dQuality(rec1, maxReadLength);
 				trimSequenceAndQuality(rec2, maxReadLength);
 				
 				out1.write(rec1);
 				out2.write(rec2);
 			}
+			*/
 			
 			rec1 = fastq1.getNextRecord();
 			rec2 = fastq2.getNextRecord();
