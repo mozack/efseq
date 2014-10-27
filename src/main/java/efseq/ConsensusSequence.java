@@ -25,7 +25,7 @@ public class ConsensusSequence {
 	private static final char MIN_QUAL = '!';
 
 	public List<SAMRecord> collapse(List<SAMRecord> readsAtLocus, int maxVariance,
-			int minFreq, boolean isDcs) throws IOException {
+			int minFreq, boolean isDcs, int phredScaledLod) throws IOException {
 
 		List<List<SAMRecord>> collapsedReads = new ArrayList<List<SAMRecord>>();
         
@@ -38,7 +38,8 @@ public class ConsensusSequence {
         
     	for (SAMRecord read : readsAtLocus) {
 			
-    		if (read.getReadUnmappedFlag() || read.getNotPrimaryAlignmentFlag() || (read.getFlags() & 0x800) == 0x800 || read.getCigar().getCigarElement(0).getOperator() == CigarOperator.S) {
+//    		if (read.getReadUnmappedFlag() || read.getNotPrimaryAlignmentFlag() || (read.getFlags() & 0x800) == 0x800 || read.getCigar().getCigarElement(0).getOperator() == CigarOperator.S) {
+    		if (read.getReadUnmappedFlag() || read.getNotPrimaryAlignmentFlag() || (read.getFlags() & 0x800) == 0x800) {
     			// Skip to the next read
     			// TODO: Adjust for soft clipped start upstream from here.
     			continue;
@@ -48,27 +49,32 @@ public class ConsensusSequence {
     		
 			for (List<SAMRecord> collapsedRead : collapsedReads) {
 							
-				String firstTag;
-				String secondTag;
-				    		
-				firstTag = collapsedRead.get(0).getReadName().substring(0, FastqPreprocessor.TAG_LENGTH);
+				SAMRecord firstCollapsedRead = collapsedRead.get(0);
 				
-				if (isDcs) {
-		    		secondTag = read.getReadName().substring(12,24) + 
-		    				read.getReadName().substring(0,12);
-				} else {
-					secondTag = read.getReadName().substring(0, FastqPreprocessor.TAG_LENGTH);
+				if (isSameAlignment(read, firstCollapsedRead)) {
+					
+					String firstTag;
+					String secondTag;
+					    		
+					firstTag = collapsedRead.get(0).getReadName().substring(0, FastqPreprocessor.TAG_LENGTH);
+					
+					if (isDcs) {
+			    		secondTag = read.getReadName().substring(12,24) + 
+			    				read.getReadName().substring(0,12);
+					} else {
+						secondTag = read.getReadName().substring(0, FastqPreprocessor.TAG_LENGTH);
+					}
+		    		
+		    		int matchScore = fuzzy.scoreMatch(firstTag, secondTag);
+		    		
+		    		int diff = FastqPreprocessor.TAG_LENGTH - matchScore;
+		    		
+		    		if (diff <= maxVariance) {
+		    			isCollapsed = true;
+		    			collapsedRead.add(read);
+		    			break;
+		    		}
 				}
-	    		
-	    		int matchScore = fuzzy.scoreMatch(firstTag, secondTag);
-	    		
-	    		int diff = FastqPreprocessor.TAG_LENGTH - matchScore;
-	    		
-	    		if (diff <= maxVariance) {
-	    			isCollapsed = true;
-	    			collapsedRead.add(read);
-	    			break;
-	    		}
 			}
 			
 			if (!isCollapsed) {
@@ -82,14 +88,44 @@ public class ConsensusSequence {
     	List<SAMRecord> validCollapsedReads = new ArrayList<SAMRecord>();
     	for (List<SAMRecord> reads : collapsedReads) {
     		if (reads.size() >= minFreq) {
-    			validCollapsedReads.add(collapse(reads, isDcs));
+    			validCollapsedReads.add(collapse(reads, isDcs, phredScaledLod));
     		}
     	}
     	
     	return validCollapsedReads;
 	}
 	
-	private SAMRecord collapse(List<SAMRecord> reads, boolean isDcs) {
+	private boolean isSameAlignment(SAMRecord read1, SAMRecord read2) {
+		boolean isSame = false;
+		
+		if (read1.getReferenceName().equals(read2.getReferenceName()) &&
+			read1.getAlignmentStart() == read2.getAlignmentStart() &&
+			read1.getCigar().equals(read2.getCigar()) && 
+			read1.getReadNegativeStrandFlag() == read2.getReadNegativeStrandFlag() &&
+			read1.getReadPairedFlag() == read2.getReadPairedFlag()) {
+				
+			// Now check mate info
+			if (read1.getReadPairedFlag()) {
+				if (read1.getMateUnmappedFlag() == read2.getMateUnmappedFlag()) {
+					if (read1.getMateUnmappedFlag()) {
+						// Mates for both reads are unmapped
+						isSame = true;
+					} else {
+						if (read1.getMateReferenceName().equals(read2.getMateReferenceName()) &&
+							read1.getAlignmentStart() == read2.getAlignmentStart() &&
+							read1.getCigar().equals(read2.getCigar())) {
+							
+							isSame = true;
+						}
+					}
+				}
+			}
+		}
+		
+		return isSame;
+	}
+	
+	private SAMRecord collapse(List<SAMRecord> reads, boolean isDcs, int phredScaledLod) {
 		
 		// Map of maps
 		// Top map -> key = position
@@ -110,7 +146,10 @@ public class ConsensusSequence {
 					count = new Integer(0);
 				}
 				
-				count += 1;
+				//count += 1;
+				
+				// Count base qualities
+				count += read.getBaseQualities()[i];
 				
 				counts.put(base, count);
 			}
@@ -122,7 +161,7 @@ public class ConsensusSequence {
 		int ambiguousBaseCount = 0;
 		
 		for (int i=0; i<reads.get(0).getReadString().length(); i++) {
-			char consensusBase = getConsensusBase(baseCounts.get(i), reads.size());
+			char consensusBase = getConsensusBase(baseCounts.get(i), reads.size(), phredScaledLod);
 
 			sequence.append(consensusBase);
 			if (consensusBase == AMBIGUOUS_BASE) {
@@ -163,11 +202,37 @@ public class ConsensusSequence {
 			read.setAttribute("ZA", ambiguousBaseCount);
 		}
 		
-		read.setReadPairedFlag(false);
+//		read.setReadPairedFlag(false);
 		
 		return read;
 	}
-	
+
+	private char getConsensusBase(Map<Character, Integer> counts, int numReads, int phredScaledLod) {
+		
+		int totalQual = 0;
+		char winningBase = AMBIGUOUS_BASE;
+		int maxCount = -1;
+		
+		for (char base : counts.keySet()) {
+			totalQual += counts.get(base);
+			if (counts.get(base) > maxCount) {
+				maxCount = counts.get(base);
+				winningBase = base;
+			}
+		}
+				
+		int winningQual = counts.get(winningBase);
+		int otherQual = totalQual - winningQual;
+
+		if ((winningQual - otherQual) < phredScaledLod) {
+			winningBase = AMBIGUOUS_BASE;
+		}
+		
+		return winningBase;
+	}
+
+/*	
+	// Check that # base observations is >= 90% of total observations
 	private char getConsensusBase(Map<Character, Integer> counts, int numReads) {
 		for (Character base : counts.keySet()) {
 			if (counts.get(base) != null && counts.get(base) >= (numReads * MIN_CONSENSUS_BASE_FREQUENCY)) {
@@ -177,6 +242,7 @@ public class ConsensusSequence {
 		
 		return AMBIGUOUS_BASE;
 	}
+*/
 	
 	public static void main(String[] args) throws Exception {
 		String in = "/home/lmose/dev/dcs/temp1_all.sort.bam";

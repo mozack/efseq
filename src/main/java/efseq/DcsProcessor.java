@@ -17,6 +17,8 @@ import net.sf.samtools.SAMRecord;
  */
 public class DcsProcessor {
 
+	private int PHRED_SCALED_LOD_PLACEHOLDER = 70;
+	
 	public void dcs(String inputBam, String sscsOutput, String dcsOutput, int maxVarianceSscs, int maxVarianceDcs,
 			int maxReadsAtLocus) throws IOException {
 
@@ -37,7 +39,7 @@ public class DcsProcessor {
         for (List<SAMRecord> reads : reader) {
         	
         	ConsensusSequence cs = new ConsensusSequence();
-        	List<SAMRecord> sscsReads = cs.collapse(reads, maxVarianceSscs, 3, false);
+        	List<SAMRecord> sscsReads = cs.collapse(reads, maxVarianceSscs, 3, false, PHRED_SCALED_LOD_PLACEHOLDER);
         	
         	for (SAMRecord sscsRead : sscsReads) {
         		sscsWriter.addAlignment(sscsRead);
@@ -45,7 +47,7 @@ public class DcsProcessor {
         	
         	sscsCount += sscsReads.size();
         	
-        	List<SAMRecord> dcsReads = cs.collapse(sscsReads, maxVarianceDcs, 2, true);
+        	List<SAMRecord> dcsReads = cs.collapse(sscsReads, maxVarianceDcs, 2, true, PHRED_SCALED_LOD_PLACEHOLDER);
         	
         	for (SAMRecord dcsRead : dcsReads) {
         		dcsWriter.addAlignment(dcsRead);
