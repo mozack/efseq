@@ -18,7 +18,7 @@ import net.sf.samtools.SAMRecord;
 public class SscsProcessor {
 
 	public void sscs(String inputBam, String sscsOutput, int maxVarianceSscs,
-			int maxReadsAtLocus, int phredScaledLod) throws IOException {
+			int maxReadsAtLocus, int phredScaledLod, int minNumReads) throws IOException {
 
         SamLocusReader reader = new SamLocusReader(inputBam, maxReadsAtLocus);
         
@@ -33,7 +33,7 @@ public class SscsProcessor {
         for (List<SAMRecord> reads : reader) {
         	
         	ConsensusSequence cs = new ConsensusSequence();
-        	List<SAMRecord> sscsReads = cs.collapse(reads, maxVarianceSscs, 3, false, phredScaledLod);
+        	List<SAMRecord> sscsReads = cs.collapse(reads, maxVarianceSscs, minNumReads, false, phredScaledLod);
         	
         	for (SAMRecord sscsRead : sscsReads) {
         		sscsWriter.addAlignment(sscsRead);

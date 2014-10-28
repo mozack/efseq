@@ -21,15 +21,16 @@ public class EfSeq {
 			
 			FastqPreprocessor fp = new FastqPreprocessor();
 			fp.preProcess(fastq1, fastq2, out1, out2, maxReadLen);
-		} else if (args[0].equals("sscs") && args.length == 6) {
+		} else if (args[0].equals("sscs") && args.length == 7) {
 			String input = args[1];
 			String sscs = args[2];
 			int maxVarianceSscs = Integer.parseInt(args[3]);
 			int maxReadsAtLocus = Integer.parseInt(args[4]);
 			int phredScaledLod = Integer.parseInt(args[5]);
+			int minNumReads = Integer.parseInt(args[6]);
 			
 			SscsProcessor sscsProcessor = new SscsProcessor();
-			sscsProcessor.sscs(input, sscs, maxVarianceSscs, maxReadsAtLocus, phredScaledLod);			
+			sscsProcessor.sscs(input, sscs, maxVarianceSscs, maxReadsAtLocus, phredScaledLod, minNumReads);			
 		} else if (args[0].equals("dcs") && args.length == 7) {
 			// String inputBam, String sscsOutput, String dcsOutput, int maxVariance
 			String input = args[1];
@@ -47,12 +48,12 @@ public class EfSeq {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		run(args);
+//		run(args);
 		
-//		String[] argz = {
-//				"sscs", "/home/lmose/dev/efseq/piotr_test1/tp53.bam", "/home/lmose/dev/efseq/piotr_test1/sscs.bam", "2", "10000", "70"
-//		};
-//		run(argz);
+		String[] argz = {
+				"sscs", "/home/lmose/dev/efseq/piotr_test1/brca2.bam", "/home/lmose/dev/efseq/piotr_test1/sscs_brca2.bam", "2", "10000", "70", "5"
+		};
+		run(argz);
 	}
 	
 	private static void usage() {
