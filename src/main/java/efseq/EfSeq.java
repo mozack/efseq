@@ -48,12 +48,12 @@ public class EfSeq {
 	}
 	
 	public static void main(String[] args) throws Exception {
-//		run(args);
+		run(args);
 		
-		String[] argz = {
-				"sscs", "/home/lmose/dev/efseq/piotr_test1/brca2.bam", "/home/lmose/dev/efseq/piotr_test1/sscs_brca2.bam", "2", "10000", "70", "5"
-		};
-		run(argz);
+//		String[] argz = {
+//				"sscs", "/home/lmose/dev/efseq/piotr_test1/brca2.bam", "/home/lmose/dev/efseq/piotr_test1/sscs_brca2.bam", "2", "10000", "70", "5"
+//		};
+//		run(argz);
 	}
 	
 	private static void usage() {
