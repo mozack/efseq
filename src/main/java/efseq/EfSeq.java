@@ -21,6 +21,15 @@ public class EfSeq {
 			
 			FastqPreprocessor fp = new FastqPreprocessor();
 			fp.preProcess(fastq1, fastq2, out1, out2, maxReadLen);
+		} else if (args[0].equals("prep2") && args.length == 5) {
+			String fastq1 = args[1];
+			String fastq2 = args[2];
+			String out1 = args[3];
+			String out2 = args[4];
+			
+			FastqPreprocessor2 fp = new FastqPreprocessor2();
+			fp.preProcess(fastq1, fastq2, out1, out2);
+			
 		} else if (args[0].equals("sscs") && args.length == 7) {
 			String input = args[1];
 			String sscs = args[2];
@@ -57,8 +66,9 @@ public class EfSeq {
 	}
 	
 	private static void usage() {
-		System.out.println("prep = Fastq Prep for alignment and downstream DCS.  sscs = Single Strand Consensus Sequence.  dcs = Duplex Consensus Sequence");
+		System.out.println("prep = Fastq Prep for alignment and downstream processing. prep2 = Fastq Prep using molecular tag after read id.  sscs = Single Strand Consensus Sequence.  dcs = Duplex Consensus Sequence");
 		System.out.println("java -jar efseq.jar prep <1.fastq> <2.fastq> <out1.fastq> <out2.fastq> <max_read_len>");
+		System.out.println("java -jar efseq.jar prep2 <1.fastq> <2.fastq> <out1.fastq> <out2.fastq>");
 		System.out.println("java -jar efseq.jar sscs <input.bam> <sscs.bam> <max_variance_sscs> <max_reads_at_locus> <min_phred_scaled_lod>");
 		System.out.println("java -jar efseq.jar dcs <input.bam> <sscs.bam> <dcs.bam> <max_variance_sscs> <max_variance_dcs> <max_reads_at_locus>");
 	}
