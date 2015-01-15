@@ -39,7 +39,9 @@ public class FuzzyStringMatch {
 	private int scoreEntry(int row, int col) {
 		int val1 = getValue(row-1, col);
 		int val2 = getValue(row, col-1);
-		int val3 = getValue(row-1, col-1) + (s1.charAt(row) == s2.charAt(col) ? 1 : 0);
+		char ch1 = s1.charAt(row);
+		char ch2 = s2.charAt(col);
+		int val3 = getValue(row-1, col-1) + (ch1 == ch2 && ch1 != 'N' ? 1 : 0);
 		
 		int max = Math.max(val1, val2);
 		max = Math.max(max, val3);
